@@ -1,0 +1,74 @@
+# For this project, I downloaded Spotify data from Kaggle.
+# Then I created a table to insert Spotify data into.
+# Finally, I performed analytics on the data using SQL. 
+
+#Creating the table: 
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness text NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL 
+)
+
+#Then I inserted the Spotify Data .csv into the table.
+
+#Next, I explored the data using the following SQL. 
+
+#What are the top 10 happiest songs and who sings them?
+SELECT 
+track_name
+,artist_name
+,valence
+FROM BIT_DB.Spotifydata
+ORDER BY valence desc
+LIMIT 10;
+
+
+#What artist released the speechiness song and what's the name of the track?
+SELECT
+artist_name
+,track_name
+,max(speechiness)
+FROM BIT_DB.Spotifydata;
+
+#Which artist had the most songs with a popularity of 90 and above?
+SELECT
+artist_name
+,count(track_name)
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+HAVING popularity>=90
+ORDER BY sum(popularity) desc
+LIMIT 1;
+
+#What's song is the shortest and who sings it?
+SELECT 
+artist_name
+,track_name
+,min(duration_ms/1000)/60 minutes
+FROM BIT_DB.Spotifydata;
+
+#Group artists and their song into 3 categories: "Most Popular", "Popular" and "Least Popular".
+SELECT 
+artist_name, track_name,
+CASE 
+    WHEN popularity>=90 THEN "Most Popular"
+    WHEN popularity>= 85 THEN "Popular"
+    ELSE "Least Popular"
+    END AS popularity_rating
+FROM BIT_DB.Spotifydata
+ORDER BY popularity desc;
